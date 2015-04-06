@@ -3,6 +3,9 @@ package jpa;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.*;
+import java.io.*;
+import java.nio.channels.SelectableChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -82,7 +85,7 @@ public class Program {
                     throw new Exception("Hibas parancs! (" + inputLine + ")");
                 }
             } catch (Exception e) {
-                System.out.println("? " + e.toString()); 
+                System.out.println("? " + e.toString());
             }
         }
 
@@ -124,10 +127,37 @@ public class Program {
 
     // Uj mozdony felvetele
     public void ujMozdony(String sorszam, String tipusID, String futottkm) throws Exception {
+    	
+    	//Parameterek parseolasa
+    	Integer szam;
+    	Integer km;
+    	try {
+    		szam = Integer.parseInt(sorszam);
+        	km = Integer.parseInt(futottkm);
+    	} catch (NumberFormatException e) {
+    		throw new Exception("Nem megfelelo formatum!");
+    	}
+    	
+        Query q1 = em.createQuery("SELECT t from Tipus t where t.azonosito=:tipusID");
+        q1.setParameter("tipusID", tipusID);
         
-        //Alakítsa át a megfelelő típusokra a kapott String paramétereket.
-        //Ellenőrizze a típus létezését
-    	//Hozza létre az új "Mozdony" entitást és rögzítse adatbázisban az "ujEntity" metódussal.
+        Query q2 = em.createQuery("SELECT m from Mozdony m where m.id=:sorszam");
+        q2.setParameter("sorszam", szam);
+    	
+        Tipus t;
+        try {
+        	t = (Tipus)q1.getSingleResult();
+        } catch (NoResultException e) {
+        	throw new Exception("Nem letezik ilyen mozdony tipus!");
+        }
+        
+        try {
+        	Object o = q2.getSingleResult();
+        	throw new Exception("Mar letezik ilyen azonositoval mozdony!");
+        } catch (NoResultException e) {
+        	Mozdony ujMozdony = new Mozdony(szam, km, t);
+        	this.ujEntity(ujMozdony);
+        }
     }
 
     // Uj vonatszam felvetele
@@ -246,9 +276,8 @@ public class Program {
 
     //Mozdonyok listazasa
     public void listazMozdony() throws Exception {
-    	//K�sz�tsen lek�rdez�st, amely visszaadja az �sszes mozdonyt, majd
-        //irassa ki a listazEntity met�dussal az eredm�nyt.
-    	listazEntity(em.createQuery("SELECT m FROM Mozdony m").getResultList());
+    	Query q1 = em.createQuery("SELECT m FROM Mozdony m");
+    	this.listazEntity(q1.getResultList());    	
     }
 
     //Vonatszamok listazasa

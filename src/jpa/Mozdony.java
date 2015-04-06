@@ -15,8 +15,6 @@ public class Mozdony {
 	@Id
 	private int id;    
     private int futottkm;
-
-
      
     public Mozdony() {
     }

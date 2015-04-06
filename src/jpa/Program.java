@@ -124,11 +124,22 @@ public class Program {
 
     // Uj mozdony felvetele
     public void ujMozdony(String sorszam, String tipusID, String futottkm) throws Exception {
+    	
+    	//Parameterek parseolasa
+    	Integer szam;
+    	Integer km;
+    	try {
+    		szam = Integer.parseInt(sorszam);
+        	km = Integer.parseInt(futottkm);
+    	} catch (NumberFormatException e) {
+    		throw new Exception("Nem megfelelo formatum!");
+    	}
+    	
         Query q1 = em.createQuery("SELECT t from Tipus t where t.azonosito=:tipusID");
         q1.setParameter("tipusID", tipusID);
         
         Query q2 = em.createQuery("SELECT m from Mozdony m where m.id=:sorszam");
-        q2.setParameter("sorszam", Integer.parseInt(sorszam));
+        q2.setParameter("sorszam", szam);
     	
         Tipus t;
         try {
@@ -141,7 +152,7 @@ public class Program {
         	Object o = q2.getSingleResult();
         	throw new Exception("Mar letezik ilyen azonositoval mozdony!");
         } catch (NoResultException e) {
-        	Mozdony ujMozdony = new Mozdony(Integer.parseInt(sorszam), Integer.parseInt(futottkm), t);
+        	Mozdony ujMozdony = new Mozdony(szam, km, t);
         	this.ujEntity(ujMozdony);
         }
     }

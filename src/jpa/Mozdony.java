@@ -42,5 +42,5 @@ public class Mozdony {
 	public String toString() {
     	return new String(id + " " + tipus.getAzonosito() + " " + futottkm);
     }
-
+	
 }

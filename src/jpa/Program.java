@@ -123,7 +123,8 @@ public class Program {
 
     // Uj mozdony felvetele
     public void ujMozdony(String sorszam, String tipusID, String futottkm) throws Exception {
-        //TODO
+        
+    	
         //Alak�tsa �t a megfelel� t�pusokra a kapott String param�tereket.
         //Ellen�rizze a t�pus l�tez�s�t
     	//Hozza l�tre az �j "Mozdony" entit�st �s r�gz�tse adatb�zisban az "ujEntity" met�dussal.

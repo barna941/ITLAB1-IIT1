@@ -124,10 +124,9 @@ public class Program {
     // Uj mozdony felvetele
     public void ujMozdony(String sorszam, String tipusID, String futottkm) throws Exception {
         
-    	
-        //Alak�tsa �t a megfelel� t�pusokra a kapott String param�tereket.
-        //Ellen�rizze a t�pus l�tez�s�t
-    	//Hozza l�tre az �j "Mozdony" entit�st �s r�gz�tse adatb�zisban az "ujEntity" met�dussal.
+        //Alakítsa át a megfelelő típusokra a kapott String paramétereket.
+        //Ellenőrizze a típus létezését
+    	//Hozza létre az új "Mozdony" entitást és rögzítse adatbázisban az "ujEntity" metódussal.
     }
 
     // Uj vonatszam felvetele

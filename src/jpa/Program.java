@@ -131,10 +131,32 @@ public class Program {
 
     // Uj vonatszam felvetele
     public void ujVonatszam(String sorszam, String uthossz) throws Exception {
-        //TODO
-        //Alak�tsa �t a megfelel� t�pusokra a kapott String param�tereket.
-        //Ellen�rizze, hogy van-e m�r ilyen vonatsz�m
-    	//Hozza l�tre az �j "Vonatsz�m" entit�st �s r�gz�tse adatb�zisban az "ujEntity" met�dussal.
+        //Alakítsa át a megfelelő típusokra a kapott String paramétereket.
+        //Ellenőrizze, hogy van-e már ilyen vonatszám
+    	//Hozza létre az új "Vonatszám" entitást és rögzítse adatbázisban az "ujEntity" metódussal.
+    	
+    	// Paraméterek parseolása
+    	Integer id;
+    	Long hossz;
+    	try {
+    		id = Integer.parseInt(sorszam);
+    		hossz = Long.parseLong(uthossz);
+    	} catch (NumberFormatException e) {
+    		throw new Exception("Nem megfelelo szamformatum!");
+    	}
+    	
+    	// Megnézzük, hogy van-e már ilyen sorszámú vonatszám
+    	Query q1 = em.createQuery("SELECT vsz FROM Vonatszam vsz WHERE vsz.szam=:sorszam");
+    	q1.setParameter("sorszam", id);
+    	
+    	try {
+    		q1.getSingleResult();
+    		throw new Exception("Már létezik ilyen sorszamu vonatszam!");
+    	} catch (NoResultException e) {
+    		// Ha nincs ilyen sorszámú vonatszám, hozzáadjuk.
+    		Vonatszam ujVonatszam = new Vonatszam(id, hossz);
+    		ujEntity(ujVonatszam);
+    	}
     }
 
     // Uj vonat felvetele
@@ -169,9 +191,10 @@ public class Program {
 
     //Vonatszamok listazasa
     public void listazVonatszam() throws Exception {
-    	//TODO    	
-    	//K�sz�tsen lek�rdez�st, amely visszaadja az �sszes vonatsz�mot, majd
-        //irassa ki a listazEntity met�dussal az eredm�nyt.
+    	//Keszitsen lekerdezest, amely visszaadja az osszes vonatszamot, majd
+        //irassa ki a listazEntity metodussal az eredmenyt.
+    	Query q1 = em.createQuery("SELECT vsz FROM Vonatszam vsz");
+    	listazEntity(q1.getResultList());
     }
 
     //Vonatok listazasa

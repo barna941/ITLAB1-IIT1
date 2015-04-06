@@ -15,8 +15,16 @@ public class Mozdony {
 	@Id
 	private int id;    
     private int futottkm;
+    @ManyToOne
+    private Tipus tipus;
      
     public Mozdony() {
+    }
+    
+    public Mozdony(int id, int futottkm, Tipus tipus) {
+    	this.id = id;
+    	this.futottkm = futottkm;
+    	this.tipus = tipus;
     }
 
     public int getFutottkm() {
@@ -30,5 +38,9 @@ public class Mozdony {
 	public int getId() {
     	return id;
 	}
+	
+	public String toString() {
+    	return new String(id + " " + tipus.getAzonosito() + " " + futottkm);
+    }
 
 }

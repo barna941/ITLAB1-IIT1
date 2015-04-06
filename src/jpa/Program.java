@@ -236,7 +236,7 @@ public class Program {
     	}
     	
         //Ellenőrizze, hogy az adott napon nincs másik vonat ugyanezzel a vonatszámmal.	
-    	Query vonatUniqueQuery = em.createQuery("SELECT v FROM Vonat v WHERE v.vonatszam=:vonatszam AND datum=:datum");
+    	Query vonatUniqueQuery = em.createQuery("SELECT v FROM Vonat v WHERE v.vonatszam=:vonatszam AND v.datum=:datum");
     	vonatUniqueQuery.setParameter("vonatszam", vonatszam);
     	vonatUniqueQuery.setParameter("datum", datumDate);
     	boolean vonatUnique = false;
@@ -251,7 +251,7 @@ public class Program {
     	
     	//Hozza létre az új "Vonat" entitást és rögzítse adatbázisban az "ujEntity" metódussal.
     	
-    	Vonat vonat = new Vonat(datumDate, mozdony, vonatszam);
+    	Vonat vonat = new Vonat(datumDate, kesesInteger, mozdony, vonatszam);
     	ujEntity(vonat);
     	
         //Növelje a mozdony futottkm-ét a vonatszám szerinti úthosszal.

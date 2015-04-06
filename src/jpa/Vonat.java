@@ -13,36 +13,27 @@ import java.util.Date;
 @Entity
 public class Vonat {
 
+	@Id
 	@Temporal(TemporalType.DATE)
     private  Date datum;
-    private int keses = 0;
+    private int keses;
     @ManyToOne
     private Mozdony mozdony;
+    @Id
     @ManyToOne
     private Vonatszam vonatszam;
-
-
-
-	@Id
-	private int id;    
+ 
  
 	
     public Vonat() {
     }
     
-    
-
-	public Vonat(Date datum, Mozdony mozdony, Vonatszam vonatszam) {
+	public Vonat(Date datum, int keses, Mozdony mozdony, Vonatszam vonatszam) {
 		super();
 		this.datum = datum;
+		this.keses = keses;
 		this.mozdony = mozdony;
 		this.vonatszam = vonatszam;
-	}
-
-
-
-	public int getId() {
-    	return id;
 	}
 
     public Date getDatum() {
@@ -77,4 +68,9 @@ public class Vonat {
 		this.vonatszam = vonatszam;
 	}
 
+	public String toString() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+		String datumString = dateFormat.format(datum);
+		return vonatszam.getSzam() + " " + datumString + " " + mozdony.getId() + " " + mozdony.getFutottkm() + " " + keses;
+	}
 }

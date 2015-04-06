@@ -4,3 +4,11 @@ bin/jpa/Program.class
 bin/jpa/Program.class
 
 src/jpa/CommonData.java
+
+*.class
+
+*.dat
+
+*.ctrl
+
+*.properties

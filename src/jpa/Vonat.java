@@ -15,7 +15,12 @@ public class Vonat {
 
 	@Temporal(TemporalType.DATE)
     private  Date datum;
-    private int keses;
+    private int keses = 0;
+    @ManyToOne
+    private Mozdony mozdony;
+    @ManyToOne
+    private Vonatszam vonatszam;
+
 
 
 	@Id
@@ -24,6 +29,17 @@ public class Vonat {
 	
     public Vonat() {
     }
+    
+    
+
+	public Vonat(Date datum, Mozdony mozdony, Vonatszam vonatszam) {
+		super();
+		this.datum = datum;
+		this.mozdony = mozdony;
+		this.vonatszam = vonatszam;
+	}
+
+
 
 	public int getId() {
     	return id;
@@ -44,5 +60,21 @@ public class Vonat {
     public void setKeses(int keses) {
         this.keses = keses;
     }
+    
+	public Mozdony getMozdony() {
+		return mozdony;
+	}
+
+	public void setMozdony(Mozdony mozdony) {
+		this.mozdony = mozdony;
+	}
+
+	public Vonatszam getVonatszam() {
+		return vonatszam;
+	}
+
+	public void setVonatszam(Vonatszam vonatszam) {
+		this.vonatszam = vonatszam;
+	}
 
 }

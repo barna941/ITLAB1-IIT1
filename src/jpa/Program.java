@@ -1,17 +1,18 @@
 package jpa;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.logging.*;
+import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import javax.persistence.NoResultException;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 public class Program {
 
@@ -161,13 +162,74 @@ public class Program {
 
     // Uj vonat felvetele
     public void ujVonat(String vonatszamAzonosito, String datum, String mozdonySorszam, String keses) throws Exception {
-       	//TODO
-        //Alak�tsa �t a megfelel� t�pusokra a kapott String param�tereket. Tipp: haszn�lja a SimpleDateFormat-ot
-    	//Form�tum: "yyyy.MM.dd"
-        //Ellen�rizze, hogy �rv�nyes-e a vonatsz�m, �s l�tezik a mozdony.
-        //Ellen�rizze, hogy az adott napon nincs m�sik vonat ugyanezzel a vonatsz�mmal.		
-    	//Hozza l�tre az �j "Vonat" entit�st �s r�gz�tse adatb�zisban az "ujEntity" met�dussal.
-        //N�velje a mozdony futottkm-�t a vonatsz�m szerinti �thosszal. 
+        //Alakítsa át a megfelelő típusokra a kapott String paramétereket. Tipp: használja a SimpleDateFormat-ot
+    	//Formátum: "yyyy.MM.dd"
+    	Integer vonatszamAzonositoInteger;
+    	Date datumDate;
+    	Integer mozdonySorszamInteger;
+    	Integer kesesInteger;
+    	
+    	try {
+    		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+    		datumDate = dateFormat.parse(datum);
+    	} catch (ParseException e) {
+    		throw new Exception("Nem megfelelo datumformatum");
+    	}
+    	
+    	try {
+    		vonatszamAzonositoInteger = Integer.parseInt(vonatszamAzonosito);
+    		mozdonySorszamInteger = Integer.parseInt(mozdonySorszam);
+    		kesesInteger = Integer.parseInt(keses);
+    	} catch (NumberFormatException e) {
+    		throw new Exception("Nem megfelelo szamformatum!");
+    	}
+    	
+        //Ellenőrizze, hogy érvényes-e a vonatszám, és létezik-e a mozdony.
+    	Vonatszam vonatszam;
+    	Query vonatSzamQuery = em.createQuery("SELECT vsz FROM Vonatszam vsz WHERE vsz.szam=:vsz");
+    	vonatSzamQuery.setParameter("vsz", vonatszamAzonositoInteger);
+    	
+    	try {
+    		vonatszam = (Vonatszam)vonatSzamQuery.getSingleResult();
+    	} catch (NoResultException e) {
+    		throw new Exception("Nincs ilyen vonatszam!");
+    	}
+    	
+    	Mozdony mozdony;
+    	Query mozdonyQuery = em.createQuery("SELECT m FROM Mozdony m WHERE m.id=:msz");
+    	mozdonyQuery.setParameter("msz", mozdonySorszamInteger);
+    	
+    	try {
+    		mozdony = (Mozdony)mozdonyQuery.getSingleResult();
+    	} catch (NoResultException e) {
+    		throw new Exception("Nincs ilyen mozdony!");
+    	}
+    	
+        //Ellenőrizze, hogy az adott napon nincs másik vonat ugyanezzel a vonatszámmal.	
+    	Query vonatUniqueQuery = em.createQuery("SELECT v FROM Vonat v WHERE v.vonatszam=:vonatszam AND datum=:datum");
+    	vonatUniqueQuery.setParameter("vonatszam", vonatszam);
+    	vonatUniqueQuery.setParameter("datum", datumDate);
+    	boolean vonatUnique = false;
+    	
+    	try {
+    		vonatUniqueQuery.getSingleResult();
+    	} catch (NoResultException e) {
+    		vonatUnique = true;
+    	}
+    	if (!vonatUnique)
+    		throw new Exception("Van mar az adott napon vonat ezzel a vonatszammal!");
+    	
+    	//Hozza létre az új "Vonat" entitást és rögzítse adatbázisban az "ujEntity" metódussal.
+    	
+    	Vonat vonat = new Vonat(datumDate, mozdony, vonatszam);
+    	ujEntity(vonat);
+    	
+        //Növelje a mozdony futottkm-ét a vonatszám szerinti úthosszal.
+    	int futottkm = mozdony.getFutottkm();
+    	futottkm += vonatszam.getUthossz();
+    	mozdony.setFutottkm(futottkm);
+    	
+    	em.persist(mozdony);
     }
 
     //Listazasi szolgaltatasok
@@ -184,9 +246,9 @@ public class Program {
 
     //Mozdonyok listazasa
     public void listazMozdony() throws Exception {
-    	//TODO    	
     	//K�sz�tsen lek�rdez�st, amely visszaadja az �sszes mozdonyt, majd
         //irassa ki a listazEntity met�dussal az eredm�nyt.
+    	listazEntity(em.createQuery("SELECT m FROM Mozdony m").getResultList());
     }
 
     //Vonatszamok listazasa
@@ -199,9 +261,9 @@ public class Program {
 
     //Vonatok listazasa
     public void listazVonat() throws Exception {
-    	//TODO    	
     	//K�sz�tsen lek�rdez�st, amely visszaadja az �sszes vonatot, majd
         //irassa ki a listazEntity met�dussal az eredm�nyt.
+    	listazEntity(em.createQuery("SELECT v FROM Vonat v").getResultList());
     }
 
     //Egyedi lekerdezes

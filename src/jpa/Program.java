@@ -297,10 +297,17 @@ public class Program {
 
     //Egyedi lekerdezes
     public void lekerdezes(String datum) throws Exception {
-    	//TODO    	
-        //�rja ki a param�terk�nt kapott napra (INPUTNAP) vonatkoz�an, hogy az
-        //egyes mozdony-fajt�k az adott napon �sszesen h�ny kilom�tert futottak.    	
-        //Alak�tsa �t a megfelel� t�pusokra a kapott String param�tereket. Tipp: haszn�lja a SimpleDateFormat-ot
-        //Tipp: N�zzen ut�na a "t�bbsz�r�s SELECT" kezel�s�nek
+    	
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+    	Date inputDate = dateFormat.parse(datum);
+    	
+    	Query q1 = em.createQuery("SELECT t.fajta, SUM(vsz.uthossz) FROM Vonat v JOIN v.mozdony m JOIN m.tipus t JOIN v.vonatszam vsz"
+    						   + " WHERE v.datum = :inputDatum GROUP BY t.fajta");
+    	q1.setParameter("inputDatum", inputDate);
+    	
+    	List<Object[]> list = q1.getResultList();
+    	for (int i=0; i<list.size(); i++) {
+    		System.out.println(list.get(i)[0] + " " + list.get(i)[1]);
+    	}
     }
 }
